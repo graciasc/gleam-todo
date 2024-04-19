@@ -1,9 +1,9 @@
 import lustre
 import lustre/element.{}
 import lustre/element/html.{div, p, h1, h4, button, text, input }
-import gleam/list.{append, filter}
+import gleam/list.{append, filter, map}
 import lustre/event.{on_click, on_input}
-import gleam/io
+import gleam/io. { debug }
 import lustre/attribute.{placeholder, value, style}
 
 pub type Todo  {
@@ -33,8 +33,8 @@ pub fn view(model: Model) -> element.Element(Msg) {
   div([], [
     h1([], [text("To Do App")]),
     input([
-      attribute.value(model.value),
-      event.on_input(UserUpdatedMessage),
+      value(model.value),
+      on_input(UserUpdatedMessage),
     ]),
     button([on_click(AddTodo(Todo(model.value)))], [
       text("+")
@@ -46,12 +46,12 @@ pub fn view(model: Model) -> element.Element(Msg) {
 
     div(
     [],
-    list.map(model.todos, fn(note) { 
-      div([attribute.style([#("display", "flex"), #("color", "red")])], [
-        h4([attribute.style([#("margin", "0"), #("padding", "4px")])], [text(note.name), 
+    map(model.todos, fn(note) { 
+      div([style([#("display", "flex"), #("color", "red")])], [
+        h4([style([#("margin", "0"), #("padding", "4px")])], [text(note.name), 
           button([
             on_click(RemoveTodo(note)), 
-            attribute.style([#("margin-left", "4px")])], [ 
+            style([#("margin-left", "4px")])], [ 
             text("-")
           ])
         ]),
@@ -62,7 +62,7 @@ pub fn view(model: Model) -> element.Element(Msg) {
 }
 
 pub fn update(model: Model, msg: Msg) -> Model { 
-  io.debug(model)
+  debug(model)
   case msg {
 
     UserUpdatedMessage(value) -> {
@@ -70,7 +70,7 @@ pub fn update(model: Model, msg: Msg) -> Model {
     }
 
     AddTodo(value) -> { 
-      io.debug(value)
+      debug(value)
       Model(value: "", todos: append(model.todos, [ value ]))
     }
 
